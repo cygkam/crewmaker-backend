@@ -1,9 +1,11 @@
 package com.crewmaker.entity;
 
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 
+@Data
 @Entity
 @Table(name="Role")
 public class Role implements GrantedAuthority {
@@ -15,21 +17,6 @@ public class Role implements GrantedAuthority {
 
     @Column(name="Name")
     private String name;
-
-    //@ManyToMany(mappedBy = "roles")
-    //private Collection<User> users;
-
-    public void setRoleId(int roleId) {
-        this.roleId = roleId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     @Override
     public String getAuthority() {

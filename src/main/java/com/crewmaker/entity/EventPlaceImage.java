@@ -8,8 +8,6 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Data
-@Getter
-@Setter
 @NoArgsConstructor
 @Entity
 @Table(name="EventPlaceImage")

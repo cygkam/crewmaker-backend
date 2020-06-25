@@ -1,23 +1,19 @@
 package com.crewmaker.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
-
+@Data
 @Entity
 @Table(name="UserRoles")
 public class UserRoles {
 
     @EmbeddedId
     UserRolesId id;
-
-    public UserRolesId getId() {
-        return id;
-    }
-
-    public void setId(UserRolesId id) {
-        this.id = id;
-    }
 
     public UserRoles(UserRolesId id) {
         this.id = id;
@@ -27,6 +23,9 @@ public class UserRoles {
     }
 }
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Embeddable
 class UserRolesId implements Serializable {
 
@@ -40,11 +39,4 @@ class UserRolesId implements Serializable {
     @JoinColumn(name="RoleAssignedID")
     private Role roleAssignedId;
 
-    public UserRolesId(User userPermittedId, Role roleAssignedId) {
-        this.userPermittedId = userPermittedId;
-        this.roleAssignedId = roleAssignedId;
-    }
-
-    public UserRolesId() {
-    }
 }

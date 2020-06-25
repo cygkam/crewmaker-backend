@@ -1,11 +1,15 @@
 package com.crewmaker.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.List;
 import java.util.Set;
 
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name="SportsCategory")
 public class SportsCategory {
@@ -44,62 +48,4 @@ public class SportsCategory {
         this.defaultPlayersNumber = defaultPlayersNumber;
     }
 
-    public SportsCategory() {}
-
-    public int getSportsCategoryId() {
-        return sportsCategoryId;
-    }
-
-    public void setSportsCategoryId(int sportsCategoryId) {
-        this.sportsCategoryId = sportsCategoryId;
-    }
-
-    public String getSportCategoryName() {
-        return sportCategoryName;
-    }
-
-    public void setSportCategoryName(String sportCategoryName) {
-        this.sportCategoryName = sportCategoryName;
-    }
-
-    public int getDefaultPlayersNumber() {
-        return defaultPlayersNumber;
-    }
-
-    public void setDefaultPlayersNumber(int defaultPlayersNumber) {
-        this.defaultPlayersNumber = defaultPlayersNumber;
-    }
-
-    public List<EventPlace> getEventPlaces() {
-        return eventPlaces;
-    }
-
-    public void setEventPlaces(List<EventPlace> eventPlaces) {
-        this.eventPlaces = eventPlaces;
-    }
-
-    public Set<Event> getSportsCategoryEvents() {
-        return sportsCategoryEvents;
-    }
-
-    public void setSportsCategoryEvents(Set<Event> sportsCategoryEvents) {
-        this.sportsCategoryEvents = sportsCategoryEvents;
-    }
-
-    public Set<EventPlaceSportsCategory> getSportsCategoryEventPlaces() {
-        return sportsCategoryEventPlaces;
-    }
-
-    public void setSportsCategoryEventPlaces(Set<EventPlaceSportsCategory> sportsCategoryEventPlaces) {
-        this.sportsCategoryEventPlaces = sportsCategoryEventPlaces;
-    }
-
-    @Override
-    public String toString() {
-        return "SportsCategory{" +
-                "sportsCategoryId=" + sportsCategoryId +
-                ", sportCategoryName='" + sportCategoryName + '\'' +
-                ", defaultPlayersNumber=" + defaultPlayersNumber +
-                '}';
-    }
 }

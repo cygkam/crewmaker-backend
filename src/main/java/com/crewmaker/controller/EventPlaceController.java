@@ -205,7 +205,7 @@ public class EventPlaceController {
 
         EventPlace eventPlace = eventPlaceRepository.findById(eventPlaceID)
                     .orElseThrow(() -> new ResourceNotFoundException("EventPlace", "eventPlaceId", eventPlaceID));
-        eventPlace.setAccepted(true);
+        eventPlace.setIsAccepted(true);
         eventPlace.setUserAccepting(user);
         eventPlaceRepository.save(eventPlace);
 
@@ -213,7 +213,7 @@ public class EventPlaceController {
                 .fromCurrentContextPath().path("/eventPlace/{eventPlaceId}")
                 .buildAndExpand(eventPlace.getEventPlaceId()).toUri();
 
-        return ResponseEntity.created(location).body(new EventPlaceAcceptedResponse(true,  eventPlace.getAccepted(), user.getUsername(), "User data changed successfully"));
+        return ResponseEntity.created(location).body(new EventPlaceAcceptedResponse(true,  eventPlace.getIsAccepted(), user.getUsername(), "User data changed successfully"));
     }
 
     @GetMapping("/archiveEventPlace")
@@ -227,7 +227,7 @@ public class EventPlaceController {
 
         EventPlace eventPlace = eventPlaceRepository.findById(eventPlaceID)
                 .orElseThrow(() -> new ResourceNotFoundException("EventPlace", "eventPlaceId", eventPlaceID));
-        eventPlace.setArchived(!currentArchiveStatus);
+        eventPlace.setIsArchived(!currentArchiveStatus);
         eventPlaceRepository.save(eventPlace);
 
         URI location = ServletUriComponentsBuilder

@@ -37,14 +37,14 @@ public class EventPlaceResponse {
         sportsCategories = eventPlace.getSportsCategory();
         //eventPlaceSportsCategories = eventPlace.getEventPlaceSportsCategories().;
         userRequestingUsername = eventPlace.getUserRequestingUsername();
-        isAccepted = eventPlace.getAccepted();
+        isAccepted = eventPlace.getIsAccepted();
 
         if(isAccepted == false)
             userAcceptingUsername = "";
         else
             userAcceptingUsername = eventPlace.getUserAcceptingUsername();
 
-        isArchived = eventPlace.getArchived();
+        isArchived = eventPlace.getIsArchived();
         //sportsCategories =eventPlace.getEventPlaceSportsCategories();
     }
 }

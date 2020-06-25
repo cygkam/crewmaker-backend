@@ -8,8 +8,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
-@Getter
-@Setter
 @NoArgsConstructor
 @Entity
 @Table(name="User")
@@ -109,18 +107,4 @@ public class User {
         this.description = description;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "userId=" + userId +
-                ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
-                ", archived=" + archived +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", isEnabled=" + enabled +
-                '}';
-    }
 }
