@@ -8,8 +8,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EventPlaceImageRepository extends JpaRepository<UserProfileImage, Long> {
-
     @Modifying
-    @Query("update EventPlaceImage u set u.name = ?1, u.type = ?2, u.binaryData = ?3 where u.eventPlaceImageID = ?4")
+    @Query("UPDATE EventPlaceImage u SET u.name = ?1, u.type = ?2, u.binaryData = ?3 WHERE u.eventPlaceImageID = ?4")
     void setEventPlaceImageById(String name, String type, byte[] binaryData, Long eventPlaceImageID);
 }

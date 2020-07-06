@@ -1,28 +1,29 @@
 package com.crewmaker.entity;
 
 import lombok.*;
-
+import org.hibernate.annotations.Type;
 import javax.persistence.*;
 
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name="UserProfileImage")
+@Table(name="userProfileImage")
 public class UserProfileImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="ImageID")
+    @Column(name="imageID")
     private Long imageId;
 
-    @Column(name="Name")
+    @Column(name="name")
     private String name;
 
-    @Column(name="Type")
+    @Column(name="type")
     private String type;
 
     @Lob
-    @Column(name="BinaryData")
+    @Type(type="org.hibernate.type.ImageType")
+    @Column(name="binaryData")
     private byte[] binaryData;
 
     public UserProfileImage(String originalFilename, String contentType, byte[] compressBytes) {

@@ -2,19 +2,18 @@ package com.crewmaker.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name="EventPlaceOpinion")
+@Table(name="eventPlaceOpinion")
 public class EventPlaceOpinion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="eventPlaceOpinionID")
-    private int eventPlaceOpinionId;
+    private Long eventPlaceOpinionId;
 
     @ManyToOne(cascade= {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})

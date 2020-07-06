@@ -1,6 +1,6 @@
 package com.crewmaker.service;
 
-import com.crewmaker.authentication.UserPrincipal;
+import com.crewmaker.config.security.user.UserPrincipal;
 import com.crewmaker.exception.ResourceNotFoundException;
 import com.crewmaker.repository.UserRepository;
 import com.crewmaker.entity.User;

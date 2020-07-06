@@ -9,7 +9,7 @@ import java.io.Serializable;
 @Entity
 @Data
 @NoArgsConstructor
-@Table(name="Participation")
+@Table(name="participation")
 public class Participation {
 
     @EmbeddedId

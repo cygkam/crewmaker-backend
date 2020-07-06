@@ -1,12 +1,11 @@
 package com.crewmaker.config;
 
-import com.crewmaker.authentication.JWTAuthenticationEntryPoint;
-import com.crewmaker.authentication.JWTAuthenticationFilter;
+import com.crewmaker.config.security.jwt.JwtAuthenticationEntryPoint;
+import com.crewmaker.config.security.jwt.JwtAuthenticationFilter;
 import com.crewmaker.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -52,20 +51,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
-/*
-    @Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-
- */
 
     @Autowired
-    private JWTAuthenticationEntryPoint unauthorizedHandler;
+    private JwtAuthenticationEntryPoint unauthorizedHandler;
 
     @Bean
-    public JWTAuthenticationFilter jwtAuthenticationFilter() {
-        return new JWTAuthenticationFilter();
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter();
     }
 
     @Override
@@ -128,15 +120,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .antMatchers("/api/useropinion")
                 .permitAll()
+                .antMatchers("/api/uploadPhotoEventPlace/*")
+                .permitAll()
                 .antMatchers("/api/user/checkUsernameAvailability", "/api/user/checkEmailAvailability")
                .permitAll()
+                .antMatchers("/api/getEventPlace*")
+                .permitAll()
                 .anyRequest()
                 .fullyAuthenticated();
             //.httpBasic()
                 //.disable();
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         //http
-            //.addFilter(new JWTAuthenticationFilter(authenticationManager()))
+            //.addFilter(new JwtAuthenticationFilter(authenticationManager()))
             //.addFilter(new JWTAuthorizationFilter(authenticationManager()));
 
     }

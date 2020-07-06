@@ -2,20 +2,19 @@ package com.crewmaker.entity;
 
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
-
 import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name="Role")
+@Table(name="role")
 public class Role implements GrantedAuthority {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="RoleID")
+    @Column(name="roleID")
     private int roleId;
 
-    @Column(name="Name")
+    @Column(name="name")
     private String name;
 
     @Override

@@ -1,6 +1,5 @@
 package com.crewmaker.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -14,13 +13,13 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name="Event")
+@Table(name="event")
 public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="eventID")
-    private int eventId;
+    private Long eventId;
 
     @ManyToOne(cascade= {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})

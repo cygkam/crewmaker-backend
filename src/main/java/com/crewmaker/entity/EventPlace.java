@@ -3,7 +3,6 @@ package com.crewmaker.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,7 +16,7 @@ public class EventPlace {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="eventPlaceID")
-    private int eventPlaceId;
+    private Long eventPlaceId;
 
     @ManyToOne(cascade= {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})
@@ -63,9 +62,11 @@ public class EventPlace {
             CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
     private Set<EventPlaceOpinion> eventPlaceEventPlaceOpinions;
 
+    @JsonIgnore
     @OneToMany(mappedBy="id.eventPlace", cascade= {CascadeType.PERSIST,
             CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
     private Set<EventPlaceSportsCategory> eventPlaceSportsCategories;
+
 
     @ManyToMany(cascade = {CascadeType.PERSIST,
             CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
@@ -75,6 +76,14 @@ public class EventPlace {
             inverseJoinColumns = { @JoinColumn(name = "sportsCategoryID") }
     )
     Set<SportsCategory> sportsCategory = new HashSet<>();
+
+    public Set<SportsCategory> getSportsCategory() {
+        return sportsCategory;
+    }
+
+    public void setSportsCategory(Set<SportsCategory> sportsCategory) {
+        this.sportsCategory = sportsCategory;
+    }
 
     @JsonIgnore
     @OneToMany(mappedBy="eventPlace", cascade= {CascadeType.PERSIST,

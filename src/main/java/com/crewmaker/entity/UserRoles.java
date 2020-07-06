@@ -3,13 +3,12 @@ package com.crewmaker.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Data
 @Entity
-@Table(name="UserRoles")
+@Table(name="userRoles")
 public class UserRoles {
 
     @EmbeddedId
@@ -31,12 +30,12 @@ class UserRolesId implements Serializable {
 
     @ManyToOne(cascade= {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinColumn(name="UserPermittedID")
+    @JoinColumn(name="userPermittedID")
     private User userPermittedId;
 
     @ManyToOne(cascade= {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinColumn(name="RoleAssignedID")
+    @JoinColumn(name="roleAssignedID")
     private Role roleAssignedId;
 
 }

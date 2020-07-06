@@ -1,16 +1,17 @@
 package com.crewmaker.controller;
 
 
-import com.crewmaker.authentication.JWTAuthenticationResponse;
-import com.crewmaker.authentication.JWTTokenProvider;
+import com.crewmaker.config.security.jwt.JwtAuthenticationResponse;
+import com.crewmaker.config.security.jwt.JwtTokenProvider;
 import com.crewmaker.entity.Role;
 import com.crewmaker.entity.User;
 import com.crewmaker.exception.AppException;
 import com.crewmaker.repository.RoleRepository;
-import com.crewmaker.reqbody.LoginRequest;
+import com.crewmaker.dto.response.EventPlaceAcceptance;
+import com.crewmaker.dto.request.LoginRequest;
 import com.crewmaker.repository.UserRepository;
-import com.crewmaker.reqbody.ApiResponse;
-import com.crewmaker.reqbody.SignUpRequest;
+import com.crewmaker.dto.response.ApiResponse;
+import com.crewmaker.dto.request.SignUpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,7 +48,14 @@ public class AuthController {
     PasswordEncoder passwordEncoder;
 
     @Autowired
-    JWTTokenProvider tokenProvider;
+    JwtTokenProvider tokenProvider;
+
+    @PostMapping("/test")
+    public ResponseEntity<?> test() {
+        return ResponseEntity.accepted().body(new EventPlaceAcceptance(true, "User registered successfully"));
+        //return ResponseEntity.ok().body(new ApiResponse(true, "User registered successfully"));
+    }
+
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -59,7 +67,7 @@ public class AuthController {
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = tokenProvider.generateToken(authentication);
-        return ResponseEntity.ok(new JWTAuthenticationResponse(jwt));
+        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
     }
 
     @PostMapping("/signup")

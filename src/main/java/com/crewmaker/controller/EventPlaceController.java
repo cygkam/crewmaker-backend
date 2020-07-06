@@ -1,19 +1,17 @@
 package com.crewmaker.controller;
 
 
-import com.crewmaker.dto.EventDTO;
-import com.crewmaker.dto.EventPlaceDTO;
+import com.crewmaker.dto.request.NewEventPlace;
+import com.crewmaker.dto.response.*;
 import com.crewmaker.entity.*;
 import com.crewmaker.exception.ResourceNotFoundException;
 import com.crewmaker.repository.*;
-import com.crewmaker.reqbody.*;
 import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +19,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
@@ -47,7 +43,7 @@ public class EventPlaceController {
     CyclePeriodRepository cyclePeriodRepository;
 
     @PostMapping("/newEventPlace")
-    public ResponseEntity<?> addNewEventPlace(@RequestBody NewEventPlaceRequest newEventPlace) {
+    public ResponseEntity<?> addNewEventPlace(@RequestBody NewEventPlace newEventPlace) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
@@ -87,11 +83,16 @@ public class EventPlaceController {
 
 
     @GetMapping("/getEventPlace")
-    Page<EventPlaceResponse> searchEvents(@RequestParam(required = true, defaultValue = "0", name = "activePage") int activePage,
-                                          @RequestParam(required = true, defaultValue = "10" , name = "size") int size,
-                                          @RequestParam(required = true, defaultValue = "ALL" , name = "filtering") String filtering,
-                                          @RequestParam(required = true, defaultValue = "10" , name = "sorting") String sorting,
-                                          @RequestParam(name = "city") String city){
+    Page<EventPlaceProfileLongDetails> searchEvents(@RequestParam(required = true, defaultValue = "0", name = "activePage") int activePage,
+                                                    @RequestParam(required = true, defaultValue = "10" , name = "size") int size,
+                                                    @RequestParam(required = true, defaultValue = "ALL" , name = "filtering") String filtering,
+                                                    @RequestParam(required = true, defaultValue = "10" , name = "sorting") String sorting,
+                                                    @RequestParam(name = "city") String city){
+
+        //Specification<EventPlace> spec = Specification.where(EventPlace.  (name));
+        //Specification<EventPlace> spec = Specifications.where(new CustomerWithFirstName(firstName))
+         //       .and(new CustomerWithLastName(lastName))
+        //        .and(new CustomerWithStatus(status));
 
         String[] filters = sorting.split("\\_");
         Page<EventPlace> page;
@@ -167,10 +168,10 @@ public class EventPlaceController {
         }
 
 
-        Page<EventPlaceResponse> eventPlaceResponse = page.map(new Function<EventPlace, EventPlaceResponse>() {
+        Page<EventPlaceProfileLongDetails> eventPlaceResponse = page.map(new Function<EventPlace, EventPlaceProfileLongDetails>() {
             @Override
-            public EventPlaceResponse apply(EventPlace eventPlace) {
-                return new EventPlaceResponse(eventPlace);
+            public EventPlaceProfileLongDetails apply(EventPlace eventPlace) {
+                return new EventPlaceProfileLongDetails(eventPlace);
             }
         });
 
@@ -196,7 +197,7 @@ public class EventPlaceController {
     }
 
     @GetMapping("/acceptEventPlace")
-    ResponseEntity<?> acceptEventPlace(@RequestParam(required = true, name = "eventPlaceID") int eventPlaceID){
+    ResponseEntity<?> acceptEventPlace(@RequestParam(required = true, name = "eventPlaceID") Long eventPlaceID){
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(username)
@@ -213,11 +214,11 @@ public class EventPlaceController {
                 .fromCurrentContextPath().path("/eventPlace/{eventPlaceId}")
                 .buildAndExpand(eventPlace.getEventPlaceId()).toUri();
 
-        return ResponseEntity.created(location).body(new EventPlaceAcceptedResponse(true,  eventPlace.getIsAccepted(), user.getUsername(), "User data changed successfully"));
+        return ResponseEntity.created(location).body(new EventPlaceAcceptance(true,  eventPlace.getIsAccepted(), user.getUsername(), "User data changed successfully"));
     }
 
     @GetMapping("/archiveEventPlace")
-    ResponseEntity<?> deleteEventPlace(@RequestParam(required = true, name = "eventPlaceID") int eventPlaceID,
+    ResponseEntity<?> deleteEventPlace(@RequestParam(required = true, name = "eventPlaceID") Long eventPlaceID,
                                        @RequestParam(required = true, name = "currentArchiveStatus") boolean currentArchiveStatus){
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -239,7 +240,7 @@ public class EventPlaceController {
 
 
     @GetMapping("/countEventPlaceEvents")
-    ResponseEntity<?> getEventPlaceEventsCount(@RequestParam(required = true, name = "eventPlaceID") int eventPlaceID ){
+    ResponseEntity<?> getEventPlaceEventsCount(@RequestParam(required = true, name = "eventPlaceID") Long eventPlaceID ){
         EventPlace eventPlace = eventPlaceRepository.findById(eventPlaceID)
                 .orElseThrow(() -> new ResourceNotFoundException("EventPlace", "eventPlaceId", eventPlaceID));
 
@@ -251,22 +252,22 @@ public class EventPlaceController {
                 .fromCurrentContextPath().path("/eventPlace/{eventPlaceId}")
                 .buildAndExpand(eventPlace.getEventPlaceId()).toUri();
 
-        return ResponseEntity.ok().body(new EventPlaceStatisticsResponse(calculate, calculateBefore, calculateAfter));
+        return ResponseEntity.ok().body(new EventPlaceStatistics(calculate, calculateBefore, calculateAfter));
     }
 
     @GetMapping("/eventPlaces")
-    List<EventPlaceDTO> getEventPlaces() {
-        return eventPlaceRepository.findTop20ByIsAcceptedIsTrue().stream().limit(20).map(eventPlace ->  new EventPlaceDTO(eventPlace)).collect(Collectors.toList());
+    List<EventPlaceProfileShortDetails> getEventPlaces() {
+        return eventPlaceRepository.findTop20ByIsAcceptedIsTrue().stream().limit(20).map(eventPlace ->  new EventPlaceProfileShortDetails(eventPlace)).collect(Collectors.toList());
     }
 
     @GetMapping("/eventPlace")
-    EventPlaceDTO getEventPlace(@RequestParam int eventPlaceID) {
-        return new EventPlaceDTO(eventPlaceRepository.findByEventPlaceId(eventPlaceID));
+    EventPlaceProfileShortDetails getEventPlace(@RequestParam Long eventPlaceID) {
+        return new EventPlaceProfileShortDetails(eventPlaceRepository.findByEventPlaceId(eventPlaceID));
     }
 
     @GetMapping("/eventPlacesByCategoryAndCity")
-    List<EventPlaceDTO> getEventPlacesBySportCategoryCity(@RequestParam int sportCategoryId,
-                                                          @RequestParam String eventCity) {
+    List<EventPlaceProfileShortDetails> getEventPlacesBySportCategoryCity(@RequestParam int sportCategoryId,
+                                                                          @RequestParam String eventCity) {
         return eventPlaceRepository.findEventPlaceByCityAndSportCategory(sportCategoryId, eventCity).stream().collect(Collectors.toList());
     }
 

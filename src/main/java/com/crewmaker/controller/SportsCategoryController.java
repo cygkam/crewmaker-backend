@@ -1,7 +1,6 @@
 package com.crewmaker.controller;
 
-import com.crewmaker.dto.SportsCategoryDTO;
-import com.crewmaker.entity.SportsCategory;
+import com.crewmaker.dto.response.SportsCategoryDetails;
 import com.crewmaker.repository.SportsCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,12 +18,12 @@ public class SportsCategoryController {
     SportsCategoryRepository sportsCategoryRepository;
 
     @GetMapping("/sportscategories")
-    List<SportsCategoryDTO> getAllSportsCategory() {
-        return sportsCategoryRepository.findAll().stream().map(sportsCategory -> new SportsCategoryDTO(sportsCategory)).collect(Collectors.toList());
+    List<SportsCategoryDetails> getAllSportsCategory() {
+        return sportsCategoryRepository.findAll().stream().map(sportsCategory -> new SportsCategoryDetails(sportsCategory)).collect(Collectors.toList());
     }
 
     @GetMapping("/sportscategoriesplaces")
-    List<SportsCategoryDTO> getAllSportsCategoryByEventID(@RequestParam(name = "eventPlaceID") int eventPlaceID) {
+    List<SportsCategoryDetails> getAllSportsCategoryByEventID(@RequestParam(name = "eventPlaceID") Long eventPlaceID) {
         return sportsCategoryRepository.findByEventPlaceId(eventPlaceID);
     }
 }

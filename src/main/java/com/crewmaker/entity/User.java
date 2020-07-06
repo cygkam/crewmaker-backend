@@ -2,7 +2,6 @@ package com.crewmaker.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -10,51 +9,51 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name="User")
+@Table(name="user")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="UserID")
+    @Column(name="userID")
     private Long userId;
 
-    @Column(name="Username")
+    @Column(name="username")
     private String username;
 
-    @Column(name="Email")
+    @Column(name="email")
     private String email;
 
-    @Column(name="Password")
+    @Column(name="password")
     private String password;
     
-    @Column(name="Name")
+    @Column(name="name")
     private String name;
 
-    @Column(name="Surname")
+    @Column(name="surname")
     private String surname;
 
-    @Column(name="Archived")
+    @Column(name="archived")
     private boolean archived;
 
-    @Column(name="Enabled")
+    @Column(name="enabled")
     private boolean enabled;
 
-    @Column(name="PhoneNumber")
+    @Column(name="phoneNumber")
     private String phoneNumber;
 
     @OneToOne(cascade= {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinColumn(name="ImageID")
+    @JoinColumn(name="imageID")
     @JsonIgnore
     private UserProfileImage userProfileImage;
 
-    @Column(name="Description")
+    @Column(name="description")
     private String description;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "UserRoles",
-            joinColumns = @JoinColumn(name = "UserPermittedID"),
-            inverseJoinColumns = @JoinColumn(name = "RoleAssignedID"))
+    @JoinTable(name = "userRoles",
+            joinColumns = @JoinColumn(name = "userPermittedID"),
+            inverseJoinColumns = @JoinColumn(name = "roleAssignedID"))
     @JsonIgnore
     private Set<Role> roles = new HashSet<>();
 

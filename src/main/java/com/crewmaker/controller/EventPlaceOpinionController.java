@@ -1,6 +1,6 @@
 package com.crewmaker.controller;
 
-import com.crewmaker.dto.EventPlaceOpinionDTO;
+import com.crewmaker.dto.response.EventPlaceOpinionDetails;
 import com.crewmaker.entity.EventPlace;
 import com.crewmaker.entity.EventPlaceOpinion;
 import com.crewmaker.entity.User;
@@ -9,8 +9,8 @@ import com.crewmaker.repository.EventPlaceOpinionRepository;
 import com.crewmaker.repository.EventPlaceRepository;
 import com.crewmaker.repository.EventRepository;
 import com.crewmaker.repository.UserRepository;
-import com.crewmaker.reqbody.ApiResponse;
-import com.crewmaker.reqbody.EventPlaceOpinionRequest;
+import com.crewmaker.dto.response.ApiResponse;
+import com.crewmaker.dto.request.NewEventPlaceOpinion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +38,7 @@ public class EventPlaceOpinionController {
     EventPlaceRepository eventPlaceRepository;
 
     @PostMapping("/addEventPlaceOpinion")
-    public ResponseEntity<?> registerOpinion (@Valid @RequestBody EventPlaceOpinionRequest request){
+    public ResponseEntity<?> registerOpinion (@Valid @RequestBody NewEventPlaceOpinion request){
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(username)
@@ -66,20 +66,20 @@ public class EventPlaceOpinionController {
     }
 
     @GetMapping("/eventOpinion")
-    public EventPlaceOpinionDTO getUserOpinion(@RequestParam int eventPlaceID, @RequestParam String currentUser){
+    public EventPlaceOpinionDetails getUserOpinion(@RequestParam Long eventPlaceID, @RequestParam String currentUser){
 
         EventPlace eventPlace = eventPlaceRepository.findByEventPlaceId(eventPlaceID);
 
         EventPlaceOpinion opinion = eventPlaceOpinionRepository.findByEventPlaceAndUserAuthorUsername(eventPlace, currentUser);
         if(opinion != null) {
-            return new EventPlaceOpinionDTO(opinion);
+            return new EventPlaceOpinionDetails(opinion);
         } else {
             return null;
         }
     }
 
     @GetMapping("/getEventPlaceOpinions")
-    public List<EventPlaceOpinionDTO> getEventPlaceOpinions (@RequestParam int eventPlaceID){
-        return eventPlaceOpinionRepository.findAllByEventPlaceEventPlaceId(eventPlaceID).stream().map(el -> new EventPlaceOpinionDTO(el)).collect(Collectors.toList());
+    public List<EventPlaceOpinionDetails> getEventPlaceOpinions (@RequestParam Long eventPlaceID){
+        return eventPlaceOpinionRepository.findAllByEventPlaceEventPlaceId(eventPlaceID).stream().map(el -> new EventPlaceOpinionDetails(el)).collect(Collectors.toList());
     }
 }

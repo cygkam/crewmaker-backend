@@ -1,36 +1,26 @@
 package com.crewmaker.controller;
 
-import com.crewmaker.authentication.AvailabilityConfirmation;
-import com.crewmaker.authentication.CurrentUser;
-import com.crewmaker.authentication.UserPrincipal;
-import com.crewmaker.authentication.UserSummary;
-import com.crewmaker.entity.UserProfileImage;
+import com.crewmaker.config.security.AvailabilityConfirmation;
+import com.crewmaker.config.security.user.CurrentUser;
+import com.crewmaker.config.security.user.UserPrincipal;
+import com.crewmaker.config.security.user.UserSummary;
+import com.crewmaker.dto.response.UserProfileDetails;
 import com.crewmaker.exception.ResourceNotFoundException;
-import com.crewmaker.model.UserProfile.UserProfileUser;
 import com.crewmaker.entity.User;
 import com.crewmaker.repository.UserRepository;
-import com.crewmaker.reqbody.ApiResponse;
-import com.crewmaker.reqbody.ImageResponse;
-import com.crewmaker.reqbody.UserUpdateRequest;
-import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
+import com.crewmaker.dto.response.ApiResponse;
+import com.crewmaker.dto.request.UpdatedUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.io.IOException;
 import java.net.URI;
-import java.util.Optional;
-import java.util.zip.DataFormatException;
-import java.util.zip.Deflater;
-import java.util.zip.Inflater;
 
 @Controller
 @CrossOrigin
@@ -51,25 +41,25 @@ public class UserController {
     }
 
     @GetMapping("/users/{username}")
-    public UserProfileUser getUserProfile(@PathVariable(value = "username") String username) {
+    public UserProfileDetails getUserProfile(@PathVariable(value = "username") String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
 
-        UserProfileUser userProfile = new UserProfileUser(user.getUsername(), user.getEmail(), user.getPhoneNumber(), user.getDescription(), user.getName(), user.getSurname());
+        UserProfileDetails userProfile = new UserProfileDetails(user.getUsername(), user.getEmail(), user.getPhoneNumber(), user.getDescription(), user.getName(), user.getSurname());
 
         return userProfile;
     }
 
     @PostMapping("/updateUser")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody UserUpdateRequest userUpdateRequest) {
-        User user = userRepository.findByUsername(userUpdateRequest.getUsername())
-                .orElseThrow(() -> new ResourceNotFoundException("User", "username", userUpdateRequest.getUsername()));
+    public ResponseEntity<?> registerUser(@Valid @RequestBody UpdatedUser updatedUser) {
+        User user = userRepository.findByUsername(updatedUser.getUsername())
+                .orElseThrow(() -> new ResourceNotFoundException("User", "username", updatedUser.getUsername()));
         // Creating user's account
-        user.setEmail(userUpdateRequest.getEmail());
-        user.setName(userUpdateRequest.getName());
-        user.setSurname(userUpdateRequest.getSurname());
-        user.setPhoneNumber(userUpdateRequest.getPhoneNumber());
-        user.setDescription(userUpdateRequest.getDescription());
+        user.setEmail(updatedUser.getEmail());
+        user.setName(updatedUser.getName());
+        user.setSurname(updatedUser.getSurname());
+        user.setPhoneNumber(updatedUser.getPhoneNumber());
+        user.setDescription(updatedUser.getDescription());
 
         User result = userRepository.save(user);
 

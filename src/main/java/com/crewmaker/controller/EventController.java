@@ -1,13 +1,12 @@
 package com.crewmaker.controller;
 
-import com.crewmaker.dto.EventDTO;
+import com.crewmaker.dto.response.EventProfileDetails;
 import com.crewmaker.entity.*;
 import com.crewmaker.exception.ResourceNotFoundException;
 import com.crewmaker.repository.*;
-import com.crewmaker.reqbody.ApiResponse;
-import com.crewmaker.reqbody.EventUpdateRequest;
-import com.crewmaker.reqbody.NewEventPlaceRequest;
-import com.crewmaker.reqbody.NewEventRequest;
+import com.crewmaker.dto.response.ApiResponse;
+import com.crewmaker.dto.request.UpdatedEvent;
+import com.crewmaker.dto.request.NewEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +16,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.sql.Time;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -41,59 +38,40 @@ public class EventController {
     @Autowired
     private ParticipationRepository participationRepository;
 
-    //baeldung requestparams zeby parametryzowac tutaj jaki event i przeslac sobie id sportscategory a nie string.
-   /* @GetMapping("/api/searchevents")
-    List<EventDTO> searchEvents(@RequestParam(name = "categoryid") int categoryID){
-        return eventRepository.findAllBySportsCategorySportsCategoryId(categoryID)
-                .stream().limit(10).map(event -> new EventDTO(event)).collect(Collectors.toList());
-    }*/
     @GetMapping("/api/searchevents")
-    List<EventDTO> searchEvents(@RequestParam(name = "categoryid") int categoryID,
-                                @RequestParam  @DateTimeFormat(pattern = "dd-MM-yyyy") Date eventDate,
-                                @RequestParam Time time,
-                                @RequestParam String eventCity){
+    List<EventProfileDetails> searchEvents(@RequestParam(name = "categoryid") int categoryID,
+                                           @RequestParam  @DateTimeFormat(pattern = "dd-MM-yyyy") Date eventDate,
+                                           @RequestParam Time time,
+                                           @RequestParam String eventCity){
 
-        //System.out.println(eventDate.toString());
-        /*return eventRepository.findAllBySportsCategorySportsCategoryId(categoryID)
-                .stream().limit(10).map(event -> new EventDTO(event)).collect(Collectors.toList());
-*/
-        /*return eventRepository.findAllByDateAfterAndAndSportsCategorySportsCategoryIdOrderByDate(
-                eventDate
-                ,categoryID)
-                .stream().limit(10).map(event ->  new EventDTO(event)).collect(Collectors.toList());*/
         if(eventCity.equals("")) {
             return eventRepository.findAllByDateAfterAndEventTimeAfterAndSportsCategorySportsCategoryIdOrderByDateAscEventTimeAsc(eventDate, time, categoryID)
-                    .stream().limit(10).map(e -> new EventDTO(e)).collect(Collectors.toList());
+                    .stream().limit(10).map(e -> new EventProfileDetails(e)).collect(Collectors.toList());
         }else {
             return eventRepository.findAllByDateAfterAndEventTimeAfterAndSportsCategorySportsCategoryIdAndEventPlaceCityOrderByDateAscEventTimeAsc
                     (eventDate, time, categoryID, eventCity)
-                    .stream().limit(10).map(e -> new EventDTO(e)).collect(Collectors.toList());
+                    .stream().limit(10).map(e -> new EventProfileDetails(e)).collect(Collectors.toList());
         }
     }
 
     @GetMapping("/api/event")
-    EventDTO findOneEvent (@RequestParam(name = "eventId") int eventId) {
-        return new EventDTO(eventRepository.findByEventId(eventId));
-    }
-
-    @GetMapping("/api/test")
-    String test(){
-        return "TEST";
+    EventProfileDetails findOneEvent (@RequestParam(name = "eventId") Long eventId) {
+        return new EventProfileDetails(eventRepository.findByEventId(eventId));
     }
 
     @GetMapping("api/myevents/{username}")
-    List<EventDTO> getMyEvents(@PathVariable(value = "username") String username) {
+    List<EventProfileDetails> getMyEvents(@PathVariable(value = "username") String username) {
 
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
 
         return eventRepository.findAllByEventParticipationsIdUser(user)
-                .stream().map(event -> new EventDTO(event)).collect(Collectors.toList());
+                .stream().map(event -> new EventProfileDetails(event)).collect(Collectors.toList());
 
     }
 
     @GetMapping("/api/counteventsparticipants")
-    long countParticipants(@RequestParam int eventID){
+    long countParticipants(@RequestParam Long eventID){
         return eventRepository.countAllByEventParticipationsIdEvent(eventRepository.findByEventId(eventID));
     }
 
@@ -104,13 +82,13 @@ public class EventController {
     }
 
     @PostMapping("api/newEvent")
-    public ResponseEntity<?> addNewEvent(@RequestBody NewEventRequest newEvent) {
+    public ResponseEntity<?> addNewEvent(@RequestBody NewEvent newEvent) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(username)
                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
 
         CyclePeriod cyclePeriod = cyclePeriodRepository.findByCyclePeriodId(newEvent.getCycleId());
-        EventStatus eventStatus = eventStatusRepository.findByEventStatusId(1);
+        EventStatus eventStatus = eventStatusRepository.findByEventStatusId(1L);
         EventPlace eventPlace = eventPlaceRepository.findByEventPlaceId(newEvent.getEventPlaceId());
         SportsCategory sportsCategory = sportsCategoryRepository.findBySportsCategoryId(newEvent.getSportCategoryId());
 
@@ -135,11 +113,11 @@ public class EventController {
     }
 
     @PostMapping("api/updateEvent")
-    public ResponseEntity<?> updateEvent(@RequestBody EventUpdateRequest eventUpdate) {
-        int eventId = eventUpdate.getEventId();
+    public ResponseEntity<?> updateEvent(@RequestBody UpdatedEvent updatedEvent) {
+        Long eventId = updatedEvent.getEventId();
         Event event = eventRepository.findByEventId(eventId);
 
-        int cycleId = eventUpdate.getCycleId();
+        Long cycleId = updatedEvent.getCycleId();
         CyclePeriod cyclePeriod = cyclePeriodRepository.findByCyclePeriodId(cycleId);
         event.setCyclePeriod(cyclePeriod);
 
@@ -147,19 +125,19 @@ public class EventController {
         if(cyclePeriod != null)
             isCyclic = true;
 
-        int eventPlaceId = eventUpdate.getEventPlaceId();
+        Long eventPlaceId = updatedEvent.getEventPlaceId();
         EventPlace eventPlace = eventPlaceRepository.findByEventPlaceId(eventPlaceId);
         event.setEventPlace(eventPlace);
 
-        event.setSportsCategory(sportsCategoryRepository.findBySportsCategoryId(eventUpdate.getSportCategoryId()));
+        event.setSportsCategory(sportsCategoryRepository.findBySportsCategoryId(updatedEvent.getSportCategoryId()));
 
-        event.setName(eventUpdate.getEventName());
-        event.setDescription(eventUpdate.getEventDescription());
-        event.setDate(eventUpdate.getEventDate());
-        event.setEventTime(eventUpdate.getEventTime());
-        event.setMaxPlayers(eventUpdate.getMaxPlayers());
+        event.setName(updatedEvent.getEventName());
+        event.setDescription(updatedEvent.getEventDescription());
+        event.setDate(updatedEvent.getEventDate());
+        event.setEventTime(updatedEvent.getEventTime());
+        event.setMaxPlayers(updatedEvent.getMaxPlayers());
         event.setCyclic(isCyclic);
-        event.setEventDuration(eventUpdate.getEventDuration());
+        event.setEventDuration(updatedEvent.getEventDuration());
 
         Event result = eventRepository.save(event);
 
@@ -171,9 +149,9 @@ public class EventController {
     }
 
     @PostMapping("api/cancelEvent/{eventID}")
-    public ResponseEntity<?> cancelEvent(@PathVariable(value = "eventID") int eventID) {
+    public ResponseEntity<?> cancelEvent(@PathVariable(value = "eventID") Long eventID) {
         Event event = eventRepository.findByEventId(eventID);
-        event.setEventStatus(eventStatusRepository.findByEventStatusId(2));
+        event.setEventStatus(eventStatusRepository.findByEventStatusId(2L));
 
         Event result = eventRepository.save(event);
 
