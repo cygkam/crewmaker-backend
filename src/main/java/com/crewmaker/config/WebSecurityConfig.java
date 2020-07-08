@@ -114,6 +114,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .antMatchers("/api/eventPlaceImage/*")
                 .permitAll()
+                .antMatchers("/api/testQuery*")
+                .permitAll()
                 .antMatchers("/api/eventOpinion")
                 .permitAll()
                 .antMatchers("/api/getEventPlaceOpinions")

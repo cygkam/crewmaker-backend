@@ -24,28 +24,27 @@ public class ImageController {
 
     @GetMapping("/event-place-image/{eventPlaceID}")
     public ResponseEntity<ImageResponse> getEventPlaceImage(@PathVariable(value = "eventPlaceID") Long eventPlaceID) {
-        return Optional.ofNullable(imageService.getEventPlaceImage(eventPlaceID,256,256)).map(retrivedImage -> ResponseEntity
-                .ok().body(new ImageResponse(retrivedImage,"eventPlace" + eventPlaceID))).orElseGet(() -> ResponseEntity.notFound().build());
+        return Optional.ofNullable(imageService.getEventPlaceImage(eventPlaceID, 256, 256)).map(retrivedImage -> ResponseEntity
+                .ok().body(new ImageResponse(retrivedImage, "eventPlace" + eventPlaceID))).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Transactional
     @PostMapping("/event-place-image/{eventPlaceID}")
     public ResponseEntity<?> uploadEventPlaceImage(@RequestParam("file") MultipartFile file, @PathVariable(value = "eventPlaceID") Long eventPlaceID) throws IOException {
-        boolean successfulUpload =  imageService.uploadEventPlaceImage(file,eventPlaceID);
+        boolean successfulUpload = imageService.uploadEventPlaceImage(file, eventPlaceID);
         return ResponseEntity.ok(new ApiResponse(successfulUpload, successfulUpload ? "Image uploaded successfully" : "Error, couldn't upload image"));
     }
 
     @GetMapping("/user-profile-image/{username}")
     public ResponseEntity<ImageResponse> getUserProfileImage(@PathVariable(value = "username") String username, @RequestParam(value = "isSmall", required = true) boolean isSmall) {
         return Optional.ofNullable(imageService.getUserProfileImage(username, isSmall)).map(retrivedImage -> ResponseEntity
-                .ok().body(new ImageResponse(retrivedImage ,"userProfileImage" + username))).orElseGet(() -> ResponseEntity.notFound().build());
+                .ok().body(new ImageResponse(retrivedImage, "userProfileImage" + username))).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Transactional
     @PostMapping("/user-profile-image")
     public ResponseEntity<?> uploadUserImage(@RequestParam("file") MultipartFile file) throws IOException {
-        boolean successfulUpload =  imageService.uploadUserImage(file);
+        boolean successfulUpload = imageService.uploadUserImage(file);
         return ResponseEntity.ok(new ApiResponse(successfulUpload, successfulUpload ? "Image uploaded successfully" : "Error, couldn't upload image"));
     }
-
 }
