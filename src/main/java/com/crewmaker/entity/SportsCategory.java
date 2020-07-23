@@ -1,11 +1,18 @@
 package com.crewmaker.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.List;
 import java.util.Set;
 
+
 @Entity
-@Table(name="sportscategory")
+@Table(name="SportsCategory")
 public class SportsCategory {
 
     @Id
@@ -19,6 +26,7 @@ public class SportsCategory {
     @Column(name="defaultPlayersNumber")
     private int defaultPlayersNumber;
 
+    @JsonIgnore
     @ManyToMany(cascade= {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})
     @JoinTable(name="eventplacesportscategory",
@@ -26,9 +34,15 @@ public class SportsCategory {
             inverseJoinColumns=@JoinColumn(name="eventPlaceID"))
     private List<EventPlace> eventPlaces;
 
+    @JsonIgnore
     @OneToMany(mappedBy="sportsCategory", cascade= {CascadeType.PERSIST,
             CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
+
     private Set<Event> sportsCategoryEvents;
+    @JsonIgnore
+    @OneToMany(mappedBy="id.sportsCategory", cascade= {CascadeType.PERSIST,
+            CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
+    private Set<EventPlaceSportsCategory> sportsCategoryEventPlaces;
 
     public SportsCategory(String sportCategoryName, int defaultPlayersNumber) {
         this.sportCategoryName = sportCategoryName;
@@ -75,6 +89,14 @@ public class SportsCategory {
 
     public void setSportsCategoryEvents(Set<Event> sportsCategoryEvents) {
         this.sportsCategoryEvents = sportsCategoryEvents;
+    }
+
+    public Set<EventPlaceSportsCategory> getSportsCategoryEventPlaces() {
+        return sportsCategoryEventPlaces;
+    }
+
+    public void setSportsCategoryEventPlaces(Set<EventPlaceSportsCategory> sportsCategoryEventPlaces) {
+        this.sportsCategoryEventPlaces = sportsCategoryEventPlaces;
     }
 
     @Override

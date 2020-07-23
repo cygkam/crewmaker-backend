@@ -1,15 +1,19 @@
 package com.crewmaker.entity;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
+@Data
+@NoArgsConstructor
 @Entity
-@Table(name="useropinion")
+@Table(name="userOpinion")
 public class UserOpinion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="userOpinionID")
-    private int userOpinionId;
+    private Long userOpinionId;
 
     @ManyToOne(cascade= {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})
@@ -38,63 +42,4 @@ public class UserOpinion {
         this.grade = grade;
     }
 
-    public UserOpinion() {}
-
-    public int getUserOpinionId() {
-        return userOpinionId;
-    }
-
-    public void setUserOpinionId(int userOpinionId) {
-        this.userOpinionId = userOpinionId;
-    }
-
-    public User getUserAuthor() {
-        return userAuthor;
-    }
-
-    public void setUserAuthor(User userAuthor) {
-        this.userAuthor = userAuthor;
-    }
-
-    public User getUserAbout() {
-        return userAbout;
-    }
-
-    public void setUserAbout(User userAbout) {
-        this.userAbout = userAbout;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public int getGrade() {
-        return grade;
-    }
-
-    public void setGrade(int grade) {
-        this.grade = grade;
-    }
-
-    @Override
-    public String toString() {
-        return "UserOpinion{" +
-                "userOpinionId=" + userOpinionId +
-                ", title='" + title + '\'' +
-                ", message='" + message + '\'' +
-                ", grade=" + grade +
-                '}';
-    }
 }

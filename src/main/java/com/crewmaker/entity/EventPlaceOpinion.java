@@ -1,15 +1,19 @@
 package com.crewmaker.entity;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
+@Data
+@NoArgsConstructor
 @Entity
-@Table(name="eventplaceopinion")
+@Table(name="eventPlaceOpinion")
 public class EventPlaceOpinion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="eventPlaceOpinionID")
-    private int eventPlaceOpinionId;
+    private Long eventPlaceOpinionId;
 
     @ManyToOne(cascade= {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})
@@ -38,63 +42,4 @@ public class EventPlaceOpinion {
         this.grade = grade;
     }
 
-    public EventPlaceOpinion() {}
-
-    public int getEventPlaceOpinionId() {
-        return eventPlaceOpinionId;
-    }
-
-    public void setEventPlaceOpinionId(int eventPlaceOpinionId) {
-        this.eventPlaceOpinionId = eventPlaceOpinionId;
-    }
-
-    public EventPlace getEventPlace() {
-        return eventPlace;
-    }
-
-    public void setEventPlace(EventPlace eventPlace) {
-        this.eventPlace = eventPlace;
-    }
-
-    public User getUserAuthor() {
-        return userAuthor;
-    }
-
-    public void setUserAuthor(User userAuthor) {
-        this.userAuthor = userAuthor;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public int getGrade() {
-        return grade;
-    }
-
-    public void setGrade(int grade) {
-        this.grade = grade;
-    }
-
-    @Override
-    public String toString() {
-        return "EventPlaceOpinion{" +
-                "eventPlaceOpinionId=" + eventPlaceOpinionId +
-                ", title='" + title + '\'' +
-                ", message='" + message + '\'' +
-                ", grade=" + grade +
-                '}';
-    }
 }
