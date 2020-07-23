@@ -35,8 +35,6 @@ public class EventController {
     private EventPlaceRepository eventPlaceRepository;
     @Autowired
     private SportsCategoryRepository sportsCategoryRepository;
-    @Autowired
-    private ParticipationRepository participationRepository;
 
     @GetMapping("/api/searchevents")
     List<EventProfileDetails> searchEvents(@RequestParam(name = "categoryid") int categoryID,
@@ -78,7 +76,6 @@ public class EventController {
     @GetMapping("api/eventuser")
     String getUsername() {
         return SecurityContextHolder.getContext().getAuthentication().getName();
-
     }
 
     @PostMapping("api/newEvent")
